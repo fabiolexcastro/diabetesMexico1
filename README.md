@@ -1,0 +1,2 @@
+# diabetesMexico1
+Estudiar
