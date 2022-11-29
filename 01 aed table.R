@@ -28,7 +28,7 @@ smmr <- purrr::map_dfr(.x = 1:length(year), .f = function(i){
   smm <- tbl %>%
     filter(Pagos > 0) %>% 
     group_by(Siniestro, ENTIDAD, SEXO) %>% 
-    summarise(Pagos = sum(Pagos, na.rm = TRUE), 
+    summarise(Pagos = mean(Pagos, na.rm = TRUE), # change to mean
               Edad = mean(Edad, na.rm = TRUE)) %>% 
     ungroup() %>% 
     setNames(c('gid', 'ENTIDAD', 'Sexo', 'Pagos', 'Edad')) %>% 
@@ -64,14 +64,12 @@ smmr2[is.na(smmr2)] <- 0
 
 # Filtering != 2022
 smmr2 <- filter(smmr2, year != 'y2022')
-write.xlsx(smmr2, './tbl/processed/table_summary_entidad.xlsx')
+write.xlsx(smmr2, './tbl/processed/table_summary_mean_entidad.xlsx')
 
 # To make the join --------------------------------------------------------
 length(unique(smmr2$ENTIDAD))
 length(unique(smmr2$year))
 
 fnal <- inner_join(shpf, smmr2, by = 'ENTIDAD')
-st_write(fnal, './gpkg/shape_data.gpkg', append = FALSE)
+st_write(fnal, './gpkg/shape_data_mean.gpkg', append = FALSE)
 
-nrow(smmr)
-nrow(fnal)
